@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "api/go/proto";
+
+package personsApi;
+
+service PersonsApi {
+  rpc GetPersons(PersonsRequest) returns (PersonsResponse);
+}
+
+message PersonsRequest {}
+
+message PersonsResponse {
+  repeated Person persons = 1;
+}
+
+message Person {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+}

@@ -1,0 +1,23 @@
+version: v1beta1
+build:
+  roots:
+    - api/proto
+  excludes:
+    - api/proto/googleapis
+lint:
+  use:
+    - DEFAULT
+    - COMMENTS
+    - UNARY_RPC
+    - OTHER
+  except:
+    - SERVICE_SUFFIX
+    - RPC_REQUEST_STANDARD_NAME
+    - RPC_RESPONSE_STANDARD_NAME
+    - COMMENT_FIELD
+    - COMMENT_ENUM_VALUE
+    - COMMENT_MESSAGE
+  enum_zero_value_suffix: _INVALID
+breaking:
+  use:
+    - PACKAGE
