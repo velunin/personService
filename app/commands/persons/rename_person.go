@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *personCommandService) RenamePerson(ctx context.Context, command RenamePersonCommand) error {
-	person, err := cs.personRepo.Get(command.Id)
+	person, err := cs.personRepo.Get(ctx, command.Id)
 	if err != nil {
 		return errors.Wrap(err, "getting person from db error")
 	}
@@ -17,7 +17,7 @@ func (cs *personCommandService) RenamePerson(ctx context.Context, command Rename
 		return err
 	}
 
-	return cs.personRepo.Update(person)
+	return cs.personRepo.Update(ctx, person)
 }
 
 type RenamePersonCommand struct {

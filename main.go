@@ -8,6 +8,7 @@ import (
 	"net"
 	pb "personService/api/go"
 	personcommands "personService/app/commands/persons"
+	"personService/app/config"
 	personqueries "personService/app/queries/persons"
 	"personService/app/repositories"
 	personrepo "personService/app/repositories/person"
@@ -22,11 +23,14 @@ func main() {
 
 	app := fx.New(
 		fx.Provide(
+			config.SetupConfigs,
+			repositories.NewTransaction,
+
 			rpc.New,
 			personrepo.NewPersonRepository,
 			personqueries.NewPersonQueryService,
 			personcommands.NewPersonCommandService,
-			repositories.NewTransaction,
+
 		),
 
 		fx.Invoke(registerHooks))

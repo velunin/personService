@@ -10,10 +10,10 @@ type Person struct {
 }
 
 type PersonState struct {
-	Id        uuid.UUID
-	FirstName string
-	LastName  string
-	IsBlocked bool
+	Id        uuid.UUID `db:"id"`
+	FirstName string    `db:"first_name""`
+	LastName  string    `db:"last_name"`
+	IsBlocked bool      `db:"is_blocked"`
 }
 
 func (p *Person) State() PersonState {

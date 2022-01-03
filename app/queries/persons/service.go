@@ -2,7 +2,9 @@ package persons
 
 import (
 	"context"
+	"go.uber.org/fx"
 	"personService/app/projections"
+	"personService/app/repositories"
 )
 
 type PersonQueryService interface {
@@ -11,8 +13,14 @@ type PersonQueryService interface {
 }
 
 type personQueryService struct {
+	QsParams
 }
 
-func NewPersonQueryService() PersonQueryService {
-	return &personQueryService{}
+type QsParams struct {
+	fx.In
+	Tx repositories.Transaction
+}
+
+func NewPersonQueryService(params QsParams) PersonQueryService {
+	return &personQueryService{params}
 }

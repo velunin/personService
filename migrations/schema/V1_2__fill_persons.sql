@@ -1,0 +1,1 @@
+INSERT INTO persons(id, first_name, last_name) VALUES ('999954c2-d9b6-4697-a63c-2093a9298939', 'Some', 'Person');

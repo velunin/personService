@@ -2,7 +2,7 @@ version: "3.5"
 services:
   db:
     container_name: db
-    image: postgres
+    image: postgres:13.3
     environment:
       - POSTGRES_DB=person_db
       - POSTGRES_USER=postgres
@@ -23,7 +23,7 @@ services:
       -connectRetries=5
       -initSql='CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
     volumes:
-      - ../migrations/schema:/flyway/sql
+      - ./migrations/schema:/flyway/sql
     depends_on:
       - db
 

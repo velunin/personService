@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS persons
+(
+    id UUID PRIMARY KEY NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    is_blocked BOOLEAN NOT NULL DEFAULT false
+);

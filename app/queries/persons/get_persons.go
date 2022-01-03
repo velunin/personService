@@ -2,18 +2,16 @@ package persons
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"personService/app/projections"
-	"personService/domain"
 )
 
 func (qs *personQueryService) GetPersons(ctx context.Context, query GetPersonsQuery) ([]*projections.Person, error) {
-	person := &projections.Person{PersonState: domain.PersonState{
-		Id:        uuid.New(),
-		FirstName: "Some",
-		LastName:  "Person",
-	}}
-	return []*projections.Person{person}, nil
+	const q = `SELECT id, first_name, last_name, is_blocked FROM persons`
+
+	var persons []*projections.Person
+	err := qs.Tx.GetDB(ctx).Select(&persons, q)
+
+	return persons, err
 }
 
 type GetPersonsQuery struct {
