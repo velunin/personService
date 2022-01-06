@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PersonsApiClient interface {
-	GetPersons(ctx context.Context, in *PersonsRequest, opts ...grpc.CallOption) (*PersonsResponse, error)
+	GetPersons(ctx context.Context, in *GetPersonsRequest, opts ...grpc.CallOption) (*GetPersonsResponse, error)
+	GetPerson(ctx context.Context, in *GetPersonRequest, opts ...grpc.CallOption) (*GetPersonResponse, error)
 }
 
 type personsApiClient struct {
@@ -33,9 +34,18 @@ func NewPersonsApiClient(cc grpc.ClientConnInterface) PersonsApiClient {
 	return &personsApiClient{cc}
 }
 
-func (c *personsApiClient) GetPersons(ctx context.Context, in *PersonsRequest, opts ...grpc.CallOption) (*PersonsResponse, error) {
-	out := new(PersonsResponse)
+func (c *personsApiClient) GetPersons(ctx context.Context, in *GetPersonsRequest, opts ...grpc.CallOption) (*GetPersonsResponse, error) {
+	out := new(GetPersonsResponse)
 	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/GetPersons", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *personsApiClient) GetPerson(ctx context.Context, in *GetPersonRequest, opts ...grpc.CallOption) (*GetPersonResponse, error) {
+	out := new(GetPersonResponse)
+	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/GetPerson", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +56,8 @@ func (c *personsApiClient) GetPersons(ctx context.Context, in *PersonsRequest, o
 // All implementations must embed UnimplementedPersonsApiServer
 // for forward compatibility
 type PersonsApiServer interface {
-	GetPersons(context.Context, *PersonsRequest) (*PersonsResponse, error)
+	GetPersons(context.Context, *GetPersonsRequest) (*GetPersonsResponse, error)
+	GetPerson(context.Context, *GetPersonRequest) (*GetPersonResponse, error)
 	mustEmbedUnimplementedPersonsApiServer()
 }
 
@@ -54,8 +65,11 @@ type PersonsApiServer interface {
 type UnimplementedPersonsApiServer struct {
 }
 
-func (UnimplementedPersonsApiServer) GetPersons(context.Context, *PersonsRequest) (*PersonsResponse, error) {
+func (UnimplementedPersonsApiServer) GetPersons(context.Context, *GetPersonsRequest) (*GetPersonsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPersons not implemented")
+}
+func (UnimplementedPersonsApiServer) GetPerson(context.Context, *GetPersonRequest) (*GetPersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPerson not implemented")
 }
 func (UnimplementedPersonsApiServer) mustEmbedUnimplementedPersonsApiServer() {}
 
@@ -71,7 +85,7 @@ func RegisterPersonsApiServer(s grpc.ServiceRegistrar, srv PersonsApiServer) {
 }
 
 func _PersonsApi_GetPersons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PersonsRequest)
+	in := new(GetPersonsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +97,25 @@ func _PersonsApi_GetPersons_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/personsApi.PersonsApi/GetPersons",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PersonsApiServer).GetPersons(ctx, req.(*PersonsRequest))
+		return srv.(PersonsApiServer).GetPersons(ctx, req.(*GetPersonsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PersonsApi_GetPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonsApiServer).GetPerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/personsApi.PersonsApi/GetPerson",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonsApiServer).GetPerson(ctx, req.(*GetPersonRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,6 +130,10 @@ var PersonsApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPersons",
 			Handler:    _PersonsApi_GetPersons_Handler,
+		},
+		{
+			MethodName: "GetPerson",
+			Handler:    _PersonsApi_GetPerson_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

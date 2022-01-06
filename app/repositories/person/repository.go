@@ -2,6 +2,7 @@ package person
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"personService/domain"
 )
@@ -43,3 +44,7 @@ func (r *personRepository) Get(ctx context.Context, id uuid.UUID) (*domain.Perso
 func NewPersonRepository() Repository {
 	return &personRepository{}
 }
+
+var (
+	ErrNotFound = errors.New("entity not found")
+)

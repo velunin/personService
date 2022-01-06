@@ -39,3 +39,15 @@ services:
     depends_on:
       - db
       - flyway
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile-envoy
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+      - "9090:9090"
+      - "9901:9901"
+    depends_on:
+      - app
