@@ -8,6 +8,10 @@ package personsApi;
 service PersonsApi {
   rpc GetPersons(GetPersonsRequest) returns (GetPersonsResponse);
   rpc GetPerson(GetPersonRequest) returns (GetPersonResponse);
+  rpc CreatePerson(CreatePersonRequest) returns (CreatePersonResponse);
+  rpc RenamePerson(RenamePersonRequest) returns (RenamePersonResponse);
+  rpc BlockPerson(BlockPersonRequest) returns (BlockPersonResponse);
+  rpc UnblockPerson(UnblockPersonRequest) returns (UnblockPersonResponse);
 }
 
 message GetPersonsRequest {
@@ -32,4 +36,36 @@ message Person {
   string first_name = 2;
   string last_name = 3;
   bool is_blocked = 4;
+}
+
+message CreatePersonRequest {
+  string first_name = 1;
+  string last_name = 2;
+}
+
+message CreatePersonResponse {
+  string id = 1;
+}
+
+message RenamePersonRequest {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
+message RenamePersonResponse {
+}
+
+message BlockPersonRequest {
+  string id = 1;
+}
+
+message BlockPersonResponse{
+}
+
+message UnblockPersonRequest {
+  string id = 1;
+}
+
+message UnblockPersonResponse{
 }

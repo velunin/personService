@@ -24,6 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 type PersonsApiClient interface {
 	GetPersons(ctx context.Context, in *GetPersonsRequest, opts ...grpc.CallOption) (*GetPersonsResponse, error)
 	GetPerson(ctx context.Context, in *GetPersonRequest, opts ...grpc.CallOption) (*GetPersonResponse, error)
+	CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*CreatePersonResponse, error)
+	RenamePerson(ctx context.Context, in *RenamePersonRequest, opts ...grpc.CallOption) (*RenamePersonResponse, error)
+	BlockPerson(ctx context.Context, in *BlockPersonRequest, opts ...grpc.CallOption) (*BlockPersonResponse, error)
+	UnblockPerson(ctx context.Context, in *UnblockPersonRequest, opts ...grpc.CallOption) (*UnblockPersonResponse, error)
 }
 
 type personsApiClient struct {
@@ -52,12 +56,52 @@ func (c *personsApiClient) GetPerson(ctx context.Context, in *GetPersonRequest, 
 	return out, nil
 }
 
+func (c *personsApiClient) CreatePerson(ctx context.Context, in *CreatePersonRequest, opts ...grpc.CallOption) (*CreatePersonResponse, error) {
+	out := new(CreatePersonResponse)
+	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/CreatePerson", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *personsApiClient) RenamePerson(ctx context.Context, in *RenamePersonRequest, opts ...grpc.CallOption) (*RenamePersonResponse, error) {
+	out := new(RenamePersonResponse)
+	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/RenamePerson", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *personsApiClient) BlockPerson(ctx context.Context, in *BlockPersonRequest, opts ...grpc.CallOption) (*BlockPersonResponse, error) {
+	out := new(BlockPersonResponse)
+	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/BlockPerson", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *personsApiClient) UnblockPerson(ctx context.Context, in *UnblockPersonRequest, opts ...grpc.CallOption) (*UnblockPersonResponse, error) {
+	out := new(UnblockPersonResponse)
+	err := c.cc.Invoke(ctx, "/personsApi.PersonsApi/UnblockPerson", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PersonsApiServer is the server API for PersonsApi service.
 // All implementations must embed UnimplementedPersonsApiServer
 // for forward compatibility
 type PersonsApiServer interface {
 	GetPersons(context.Context, *GetPersonsRequest) (*GetPersonsResponse, error)
 	GetPerson(context.Context, *GetPersonRequest) (*GetPersonResponse, error)
+	CreatePerson(context.Context, *CreatePersonRequest) (*CreatePersonResponse, error)
+	RenamePerson(context.Context, *RenamePersonRequest) (*RenamePersonResponse, error)
+	BlockPerson(context.Context, *BlockPersonRequest) (*BlockPersonResponse, error)
+	UnblockPerson(context.Context, *UnblockPersonRequest) (*UnblockPersonResponse, error)
 	mustEmbedUnimplementedPersonsApiServer()
 }
 
@@ -70,6 +114,18 @@ func (UnimplementedPersonsApiServer) GetPersons(context.Context, *GetPersonsRequ
 }
 func (UnimplementedPersonsApiServer) GetPerson(context.Context, *GetPersonRequest) (*GetPersonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPerson not implemented")
+}
+func (UnimplementedPersonsApiServer) CreatePerson(context.Context, *CreatePersonRequest) (*CreatePersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePerson not implemented")
+}
+func (UnimplementedPersonsApiServer) RenamePerson(context.Context, *RenamePersonRequest) (*RenamePersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenamePerson not implemented")
+}
+func (UnimplementedPersonsApiServer) BlockPerson(context.Context, *BlockPersonRequest) (*BlockPersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BlockPerson not implemented")
+}
+func (UnimplementedPersonsApiServer) UnblockPerson(context.Context, *UnblockPersonRequest) (*UnblockPersonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnblockPerson not implemented")
 }
 func (UnimplementedPersonsApiServer) mustEmbedUnimplementedPersonsApiServer() {}
 
@@ -120,6 +176,78 @@ func _PersonsApi_GetPerson_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PersonsApi_CreatePerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonsApiServer).CreatePerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/personsApi.PersonsApi/CreatePerson",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonsApiServer).CreatePerson(ctx, req.(*CreatePersonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PersonsApi_RenamePerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenamePersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonsApiServer).RenamePerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/personsApi.PersonsApi/RenamePerson",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonsApiServer).RenamePerson(ctx, req.(*RenamePersonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PersonsApi_BlockPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockPersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonsApiServer).BlockPerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/personsApi.PersonsApi/BlockPerson",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonsApiServer).BlockPerson(ctx, req.(*BlockPersonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PersonsApi_UnblockPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnblockPersonRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PersonsApiServer).UnblockPerson(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/personsApi.PersonsApi/UnblockPerson",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PersonsApiServer).UnblockPerson(ctx, req.(*UnblockPersonRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PersonsApi_ServiceDesc is the grpc.ServiceDesc for PersonsApi service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +262,22 @@ var PersonsApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPerson",
 			Handler:    _PersonsApi_GetPerson_Handler,
+		},
+		{
+			MethodName: "CreatePerson",
+			Handler:    _PersonsApi_CreatePerson_Handler,
+		},
+		{
+			MethodName: "RenamePerson",
+			Handler:    _PersonsApi_RenamePerson_Handler,
+		},
+		{
+			MethodName: "BlockPerson",
+			Handler:    _PersonsApi_BlockPerson_Handler,
+		},
+		{
+			MethodName: "UnblockPerson",
+			Handler:    _PersonsApi_UnblockPerson_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

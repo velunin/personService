@@ -25,6 +25,11 @@ func (p *Person) ChangeName(firstName, lastName string) error {
 		return ErrPersonBlocked
 	}
 
+	err := validateNames(firstName, lastName)
+	if err != nil {
+		return err
+	}
+
 	p.state.FirstName = firstName
 	p.state.LastName = lastName
 
@@ -51,21 +56,39 @@ func (p *Person) Unblock() error {
 	return nil
 }
 
-func NewPerson(id uuid.UUID, firstName string, lastName string) *Person {
+func NewPerson(id uuid.UUID, firstName, lastName string) (*Person, error) {
+	err := validateNames(firstName, lastName)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Person{state: PersonState{
 		Id:        id,
 		FirstName: firstName,
 		LastName:  lastName,
 		IsBlocked: false,
-	}}
+	}}, nil
 }
 
 func RestorePerson(state *PersonState) *Person {
 	return &Person{state: *state}
 }
 
+func validateNames(firstName, lastName string) error {
+	if firstName == "" {
+		return ErrFirstNameEmpty
+	}
+	if lastName == "" {
+		return ErrLastNameEmpty
+	}
+
+	return nil
+}
+
 var (
 	ErrPersonBlocked          = errors.New("person blocked")
 	ErrAlreadyPersonBlocked   = errors.New("person already blocked")
 	ErrAlreadyPersonUnblocked = errors.New("person already unblocked")
+	ErrFirstNameEmpty         = errors.New("first name required")
+	ErrLastNameEmpty          = errors.New("last name required")
 )

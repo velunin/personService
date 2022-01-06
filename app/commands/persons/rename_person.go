@@ -7,17 +7,24 @@ import (
 )
 
 func (cs *personCommandService) RenamePerson(ctx context.Context, command RenamePersonCommand) error {
-	person, err := cs.personRepo.Get(ctx, command.Id)
-	if err != nil {
-		return errors.Wrap(err, "getting person from db error")
-	}
+	return cs.Tx.ExecInTran(ctx, func(ctx context.Context) error {
+		person, err := cs.PersonRepo.Get(ctx, command.Id)
+		if err != nil {
+			return errors.Wrap(err, "rename person command: getting person from db error")
+		}
 
-	err = person.ChangeName(command.FirstName, command.LastName)
-	if err != nil {
-		return err
-	}
+		err = person.ChangeName(command.FirstName, command.LastName)
+		if err != nil {
+			return err
+		}
 
-	return cs.personRepo.Update(ctx, person)
+		err = cs.PersonRepo.Update(ctx, person)
+		if err != nil {
+			return errors.Wrap(err, "rename person command: updating person DB error")
+		}
+
+		return nil
+	})
 }
 
 type RenamePersonCommand struct {
