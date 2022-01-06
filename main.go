@@ -20,7 +20,6 @@ const (
 )
 
 func main() {
-
 	app := fx.New(
 		fx.Provide(
 			config.SetupConfigs,
@@ -37,9 +36,7 @@ func main() {
 	app.Run()
 }
 
-func registerHooks(
-	lifecycle fx.Lifecycle, rpcServer *rpc.PersonServer,
-) {
+func registerHooks(lifecycle fx.Lifecycle, rpcServer *rpc.PersonServer) {
 	lifecycle.Append(
 		fx.Hook{
 			OnStart: func(context.Context) error {
