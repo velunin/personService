@@ -9,6 +9,8 @@ import (
 	pb "personService/api/go"
 	personcommands "personService/app/commands/persons"
 	"personService/app/config"
+	"personService/app/dispatcher"
+	"personService/app/eventhandlers/person/whenPersonCreated"
 	personqueries "personService/app/queries/persons"
 	"personService/app/repositories"
 	personrepo "personService/app/repositories/person"
@@ -29,6 +31,10 @@ func main() {
 			personrepo.NewPersonRepository,
 			personqueries.NewPersonQueryService,
 			personcommands.NewPersonCommandService,
+
+			dispatcher.New,
+			whenPersonCreated.NewCreateOutboxMessageHandler,
+			whenPersonCreated.NewDoSomeActionsHandler,
 		),
 
 		fx.Invoke(registerHooks))

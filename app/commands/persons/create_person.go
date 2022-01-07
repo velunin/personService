@@ -14,9 +14,17 @@ func (cs *personCommandService) CreatePerson(ctx context.Context, command Create
 		return uuid.Nil, nil
 	}
 
-	err = cs.PersonRepo.Insert(ctx, person)
-	if err != nil {
-		return uuid.Nil, errors.Wrap(err, "create person command: inserting person DB error")
+	txErr := cs.Tx.ExecInTran(ctx, func(ctx context.Context) error {
+		err = cs.PersonRepo.Insert(ctx, person)
+		if err != nil {
+			return errors.Wrap(err, "create person command: inserting person DB error")
+		}
+
+		return nil
+	})
+
+	if txErr != nil {
+		return uuid.Nil, txErr
 	}
 
 	return personId, nil

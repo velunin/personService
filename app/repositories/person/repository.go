@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
+	"personService/app/dispatcher"
 	"personService/app/repositories"
 	"personService/domain"
 )
@@ -23,7 +24,8 @@ type personRepository struct {
 
 type RepoParams struct {
 	fx.In
-	Tx repositories.Transaction
+	Tx              repositories.Transaction
+	EventDispatcher dispatcher.Dispatcher
 }
 
 func (r *personRepository) Insert(ctx context.Context, person *domain.Person) error {
@@ -31,6 +33,11 @@ func (r *personRepository) Insert(ctx context.Context, person *domain.Person) er
 
 	state := person.State()
 	_, err := r.Tx.GetDB(ctx).Exec(query, state.Id, state.FirstName, state.LastName, state.IsBlocked)
+	if err != nil {
+		return err
+	}
+
+	err = r.dispatchEvents(ctx, person)
 
 	return err
 }
@@ -40,6 +47,8 @@ func (r *personRepository) Update(ctx context.Context, person *domain.Person) er
 
 	state := person.State()
 	_, err := r.Tx.GetDB(ctx).Exec(query, state.Id, state.FirstName, state.LastName, state.IsBlocked)
+
+	err = r.dispatchEvents(ctx, person)
 
 	return err
 }
@@ -66,6 +75,17 @@ func (r *personRepository) Get(ctx context.Context, id uuid.UUID) (*domain.Perso
 	}
 
 	return domain.RestorePerson(&state), nil
+}
+
+func (r *personRepository) dispatchEvents(ctx context.Context, person *domain.Person) error {
+	for _, event := range person.GetEvents() {
+		err := r.EventDispatcher.Dispatch(ctx, event)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func NewPersonRepository(params RepoParams) Repository {

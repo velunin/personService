@@ -6,7 +6,8 @@ import (
 )
 
 type Person struct {
-	state PersonState
+	state  PersonState
+	events []interface{}
 }
 
 type PersonState struct {
@@ -62,12 +63,20 @@ func NewPerson(id uuid.UUID, firstName, lastName string) (*Person, error) {
 		return nil, err
 	}
 
-	return &Person{state: PersonState{
+	person := &Person{state: PersonState{
 		Id:        id,
 		FirstName: firstName,
 		LastName:  lastName,
 		IsBlocked: false,
-	}}, nil
+	}}
+
+	person.apply(PersonCreated{
+		Id:        id,
+		FirstName: firstName,
+		LastName:  lastName,
+	})
+
+	return person, nil
 }
 
 func RestorePerson(state *PersonState) *Person {
@@ -85,6 +94,15 @@ func validateNames(firstName, lastName string) error {
 	return nil
 }
 
+func (p *Person) apply(event interface{}) {
+	p.events = append(p.events, event)
+}
+
+func (p *Person) GetEvents() []interface{} {
+	return p.events
+}
+
+// Domain errors
 var (
 	ErrPersonBlocked          = errors.New("person blocked")
 	ErrAlreadyPersonBlocked   = errors.New("person already blocked")
@@ -92,3 +110,9 @@ var (
 	ErrFirstNameEmpty         = errors.New("first name required")
 	ErrLastNameEmpty          = errors.New("last name required")
 )
+
+type PersonCreated struct {
+	Id        uuid.UUID
+	FirstName string
+	LastName  string
+}
