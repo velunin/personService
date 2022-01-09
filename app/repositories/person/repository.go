@@ -6,8 +6,8 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
+	"personService/app/database"
 	"personService/app/dispatcher"
-	"personService/app/repositories"
 	"personService/domain"
 )
 
@@ -24,7 +24,7 @@ type personRepository struct {
 
 type RepoParams struct {
 	fx.In
-	Tx              repositories.Transaction
+	Tx              database.Transaction
 	EventDispatcher dispatcher.Dispatcher
 }
 

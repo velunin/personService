@@ -4,7 +4,7 @@ import (
 	"context"
 	"go.uber.org/fx"
 	"personService/app"
-	"personService/app/repositories"
+	"personService/app/database"
 	"personService/domain"
 )
 
@@ -18,11 +18,11 @@ type createOutboxMessHandler struct {
 
 type CreateOutboxMessageParams struct {
 	fx.In
-	Tx repositories.Transaction
+	Tx database.Transaction
 }
 
 func (h *createOutboxMessHandler) Handle(ctx context.Context, event interface{}) error {
-	personCreated, ok := event.(domain.PersonCreated)
+	personCreated, ok := event.(domain.PersonCreatedEvent)
 	if !ok {
 		return nil
 	}

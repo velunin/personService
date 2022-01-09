@@ -3,8 +3,8 @@ package persons
 import (
 	"context"
 	"go.uber.org/fx"
+	"personService/app/database"
 	"personService/app/projections"
-	"personService/app/repositories"
 )
 
 type PersonQueryService interface {
@@ -18,7 +18,7 @@ type personQueryService struct {
 
 type QsParams struct {
 	fx.In
-	Tx repositories.Transaction
+	Tx database.Transaction
 }
 
 func NewPersonQueryService(params QsParams) PersonQueryService {

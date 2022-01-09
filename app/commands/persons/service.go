@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
-	"personService/app/repositories"
+	"personService/app/database"
 	"personService/app/repositories/person"
 )
 
@@ -18,7 +18,7 @@ type PersonCommandService interface {
 type CsParams struct {
 	fx.In
 	PersonRepo person.Repository
-	Tx         repositories.Transaction
+	Tx         database.Transaction
 }
 
 type personCommandService struct {

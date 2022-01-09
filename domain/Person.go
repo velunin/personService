@@ -70,7 +70,7 @@ func NewPerson(id uuid.UUID, firstName, lastName string) (*Person, error) {
 		IsBlocked: false,
 	}}
 
-	person.apply(PersonCreated{
+	person.apply(PersonCreatedEvent{
 		Id:        id,
 		FirstName: firstName,
 		LastName:  lastName,
@@ -111,7 +111,7 @@ var (
 	ErrLastNameEmpty          = errors.New("last name required")
 )
 
-type PersonCreated struct {
+type PersonCreatedEvent struct {
 	Id        uuid.UUID
 	FirstName string
 	LastName  string

@@ -1,5 +1,5 @@
 postgres:
-  host: "localhost"
+  host: "db"
   port: 5432
   dbname: "person_db"
   user: "postgres"

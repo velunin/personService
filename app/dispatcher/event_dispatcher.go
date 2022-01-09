@@ -53,7 +53,7 @@ func New(params Params) Dispatcher {
 }
 
 func setupHandlers(d *dispatcher) {
-	registerHandler(domain.PersonCreated{},
+	registerHandler(domain.PersonCreatedEvent{},
 		d.WhenPersonCreatedCreateOutboxMessageHandler,
 		d.WhenPersonCreatedDoSomeActionsHandler)
 }

@@ -9,10 +9,10 @@ import (
 	pb "personService/api/go"
 	personcommands "personService/app/commands/persons"
 	"personService/app/config"
+	"personService/app/database"
 	"personService/app/dispatcher"
 	"personService/app/eventhandlers/person/whenPersonCreated"
 	personqueries "personService/app/queries/persons"
-	"personService/app/repositories"
 	personrepo "personService/app/repositories/person"
 	"personService/app/rpc"
 )
@@ -27,7 +27,7 @@ func main() {
 			config.SetupConfigs,
 
 			rpc.New,
-			repositories.NewTransaction,
+			database.NewTransaction,
 			personrepo.NewPersonRepository,
 			personqueries.NewPersonQueryService,
 			personcommands.NewPersonCommandService,
