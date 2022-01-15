@@ -12,14 +12,14 @@ import (
 	"personService/modules/persons/app/queries"
 )
 
-type PersonServer struct {
+type Server struct {
 	proto.UnimplementedPersonsApiServer
 	personsRepository app.Repository
 	queryService      queries.PersonQueryService
 	commandService    commands.PersonCommandService
 }
 
-func (s *PersonServer) GetPersons(ctx context.Context, req *proto.GetPersonsRequest) (*proto.GetPersonsResponse, error) {
+func (s *Server) GetPersons(ctx context.Context, req *proto.GetPersonsRequest) (*proto.GetPersonsResponse, error) {
 	persons, err := s.queryService.GetPersons(ctx, queries.GetPersonsQuery{
 		Offset: req.Offset,
 		Limit:  req.Limit,
@@ -42,7 +42,7 @@ func (s *PersonServer) GetPersons(ctx context.Context, req *proto.GetPersonsRequ
 	return &proto.GetPersonsResponse{Persons: result}, nil
 }
 
-func (s *PersonServer) GetPerson(ctx context.Context, req *proto.GetPersonRequest) (*proto.GetPersonResponse, error) {
+func (s *Server) GetPerson(ctx context.Context, req *proto.GetPersonRequest) (*proto.GetPersonResponse, error) {
 	personId, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "id must be UUID")
@@ -65,7 +65,7 @@ func (s *PersonServer) GetPerson(ctx context.Context, req *proto.GetPersonReques
 	}}, nil
 }
 
-func (s *PersonServer) CreatePerson(ctx context.Context,
+func (s *Server) CreatePerson(ctx context.Context,
 	req *proto.CreatePersonRequest) (*proto.CreatePersonResponse, error) {
 	//
 	id, err := s.commandService.CreatePerson(ctx, commands.CreatePersonCommand{
@@ -79,7 +79,7 @@ func (s *PersonServer) CreatePerson(ctx context.Context,
 	return &proto.CreatePersonResponse{Id: id.String()}, nil
 }
 
-func (s *PersonServer) RenamePerson(ctx context.Context,
+func (s *Server) RenamePerson(ctx context.Context,
 	req *proto.RenamePersonRequest) (*proto.RenamePersonResponse, error) {
 	//
 	personId, err := uuid.Parse(req.Id)
@@ -99,7 +99,7 @@ func (s *PersonServer) RenamePerson(ctx context.Context,
 	return &proto.RenamePersonResponse{}, nil
 }
 
-func (s *PersonServer) BlockPerson(ctx context.Context,
+func (s *Server) BlockPerson(ctx context.Context,
 	req *proto.BlockPersonRequest) (*proto.BlockPersonResponse, error) {
 	//
 	personId, err := uuid.Parse(req.Id)
@@ -117,7 +117,7 @@ func (s *PersonServer) BlockPerson(ctx context.Context,
 	return &proto.BlockPersonResponse{}, nil
 }
 
-func (s *PersonServer) UnblockPerson(ctx context.Context,
+func (s *Server) UnblockPerson(ctx context.Context,
 	req *proto.UnblockPersonRequest) (*proto.UnblockPersonResponse, error) {
 	//
 	personId, err := uuid.Parse(req.Id)
@@ -137,7 +137,7 @@ func (s *PersonServer) UnblockPerson(ctx context.Context,
 
 func New(r app.Repository,
 	qs queries.PersonQueryService,
-	cs commands.PersonCommandService) *PersonServer {
+	cs commands.PersonCommandService) *Server {
 	//
-	return &PersonServer{personsRepository: r, queryService: qs, commandService: cs}
+	return &Server{personsRepository: r, queryService: qs, commandService: cs}
 }

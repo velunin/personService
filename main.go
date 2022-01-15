@@ -10,11 +10,11 @@ import (
 	"personService/internal/config"
 	"personService/internal/database"
 	"personService/internal/dispatcher"
-	personsoutbox "personService/internal/outboxes/persons"
 	personsrepo "personService/modules/persons/app"
 	personscommands "personService/modules/persons/app/commands"
+	personsoutbox "personService/modules/persons/app/outbox"
 	personsqueries "personService/modules/persons/app/queries"
-	"personService/modules/persons/app/rpc"
+	personsrpc "personService/modules/persons/app/rpc"
 )
 
 const (
@@ -26,7 +26,6 @@ func main() {
 		fx.Provide(
 			config.SetupConfigs,
 
-			rpc.New,
 			dispatcher.New,
 			database.NewTransaction,
 			personsoutbox.NewCreateOutboxMessageHandler,
@@ -34,6 +33,7 @@ func main() {
 			personsrepo.NewPersonRepository,
 			personsqueries.NewPersonQueryService,
 			personscommands.NewPersonCommandService,
+			personsrpc.New,
 		),
 
 		fx.Invoke(registerHooks))
@@ -41,7 +41,7 @@ func main() {
 	app.Run()
 }
 
-func registerHooks(lifecycle fx.Lifecycle, rpcServer *rpc.PersonServer) {
+func registerHooks(lifecycle fx.Lifecycle, rpcServer *personsrpc.Server) {
 	lifecycle.Append(
 		fx.Hook{
 			OnStart: func(context.Context) error {

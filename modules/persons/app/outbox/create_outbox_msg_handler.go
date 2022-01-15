@@ -1,4 +1,4 @@
-package persons
+package outbox
 
 import (
 	"context"
@@ -8,11 +8,7 @@ import (
 	"personService/modules/persons/domain"
 )
 
-type CreateOutboxMessage interface {
-	dispatcher.EventHandler
-}
-
-type createOutboxMessHandler struct {
+type createdOutboxMsgHandler struct {
 	CreateOutboxMessageParams
 }
 
@@ -21,7 +17,7 @@ type CreateOutboxMessageParams struct {
 	Tx database.Transaction
 }
 
-func (h *createOutboxMessHandler) Handle(ctx context.Context, event interface{}) error {
+func (h *createdOutboxMsgHandler) Handle(ctx context.Context, event interface{}) error {
 	personCreated, ok := event.(domain.PersonCreatedEvent)
 	if !ok {
 		return nil
@@ -36,10 +32,10 @@ func (h *createOutboxMessHandler) Handle(ctx context.Context, event interface{})
 	return nil
 }
 
-func (h *createOutboxMessHandler) GetEventType() interface{} {
+func (h *createdOutboxMsgHandler) GetEventType() interface{} {
 	return domain.PersonCreatedEvent{}
 }
 
 func NewCreateOutboxMessageHandler(params CreateOutboxMessageParams) dispatcher.EventHandlerGroup {
-	return dispatcher.EventHandlerGroup{Handler: &createOutboxMessHandler{params}}
+	return dispatcher.EventHandlerGroup{Handler: &createdOutboxMsgHandler{params}}
 }
