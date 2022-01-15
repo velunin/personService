@@ -25,6 +25,6 @@ type personCommandService struct {
 	CsParams
 }
 
-func NewPersonCommandService(params CsParams) PersonCommandService {
+func NewCommandService(params CsParams) PersonCommandService {
 	return &personCommandService{params}
 }

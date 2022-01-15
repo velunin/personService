@@ -88,7 +88,7 @@ func (r *personRepository) dispatchEvents(ctx context.Context, person *domain.Pe
 	return nil
 }
 
-func NewPersonRepository(params RepoParams) Repository {
+func NewRepository(params RepoParams) Repository {
 	return &personRepository{params}
 }
 

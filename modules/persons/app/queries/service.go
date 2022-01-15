@@ -20,6 +20,6 @@ type QsParams struct {
 	Tx database.Transaction
 }
 
-func NewPersonQueryService(params QsParams) PersonQueryService {
+func NewQueryService(params QsParams) PersonQueryService {
 	return &personQueryService{params}
 }

@@ -28,11 +28,11 @@ func main() {
 
 			dispatcher.New,
 			database.NewTransaction,
-			personsoutbox.NewCreateOutboxMessageHandler,
 
-			personsrepo.NewPersonRepository,
-			personsqueries.NewPersonQueryService,
-			personscommands.NewPersonCommandService,
+			personsrepo.NewRepository,
+			personsqueries.NewQueryService,
+			personscommands.NewCommandService,
+			personsoutbox.NewCreatedOutboxMsgHandler,
 			personsrpc.New,
 		),
 
