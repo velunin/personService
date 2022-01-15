@@ -10,7 +10,7 @@ import (
 	"personService/internal/config"
 	"personService/internal/database"
 	"personService/internal/dispatcher"
-	personsrepo "personService/modules/persons/app"
+	personsapp "personService/modules/persons/app"
 	personscommands "personService/modules/persons/app/commands"
 	personsoutbox "personService/modules/persons/app/outbox"
 	personsqueries "personService/modules/persons/app/queries"
@@ -29,11 +29,11 @@ func main() {
 			dispatcher.New,
 			database.NewTransaction,
 
-			personsrepo.NewRepository,
-			personsqueries.NewQueryService,
-			personscommands.NewCommandService,
-			personsoutbox.NewCreatedOutboxMsgHandler,
+			personsqueries.New,
+			personscommands.New,
 			personsrpc.New,
+			personsoutbox.NewWhenPersonCreated,
+			personsapp.NewRepository,
 		),
 
 		fx.Invoke(registerHooks))

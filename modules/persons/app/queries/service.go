@@ -6,7 +6,7 @@ import (
 	"personService/internal/database"
 )
 
-type PersonQueryService interface {
+type QueryService interface {
 	GetPerson(ctx context.Context, query GetPersonQuery) (*Person, error)
 	GetPersons(ctx context.Context, query GetPersonsQuery) ([]*Person, error)
 }
@@ -20,6 +20,6 @@ type QsParams struct {
 	Tx database.Transaction
 }
 
-func NewQueryService(params QsParams) PersonQueryService {
+func New(params QsParams) QueryService {
 	return &personQueryService{params}
 }

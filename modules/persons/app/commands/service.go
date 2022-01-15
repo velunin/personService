@@ -8,7 +8,7 @@ import (
 	"personService/modules/persons/app"
 )
 
-type PersonCommandService interface {
+type CommandService interface {
 	CreatePerson(ctx context.Context, command CreatePersonCommand) (uuid.UUID, error)
 	RenamePerson(ctx context.Context, command RenamePersonCommand) error
 	BlockPerson(ctx context.Context, command BlockPersonCommand) error
@@ -25,6 +25,6 @@ type personCommandService struct {
 	CsParams
 }
 
-func NewCommandService(params CsParams) PersonCommandService {
+func New(params CsParams) CommandService {
 	return &personCommandService{params}
 }

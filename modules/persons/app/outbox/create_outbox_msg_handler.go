@@ -36,6 +36,6 @@ func (h *createdOutboxMsgHandler) GetEventType() interface{} {
 	return domain.PersonCreatedEvent{}
 }
 
-func NewCreatedOutboxMsgHandler(params CreateOutboxMessageParams) dispatcher.EventHandlerGroup {
+func NewWhenPersonCreated(params CreateOutboxMessageParams) dispatcher.EventHandlerGroup {
 	return dispatcher.EventHandlerGroup{Handler: &createdOutboxMsgHandler{params}}
 }

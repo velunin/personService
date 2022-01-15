@@ -14,9 +14,9 @@ import (
 
 type Server struct {
 	proto.UnimplementedPersonsApiServer
-	personsRepository app.Repository
-	queryService      queries.PersonQueryService
-	commandService    commands.PersonCommandService
+
+	queryService   queries.QueryService
+	commandService commands.CommandService
 }
 
 func (s *Server) GetPersons(ctx context.Context, req *proto.GetPersonsRequest) (*proto.GetPersonsResponse, error) {
@@ -135,9 +135,7 @@ func (s *Server) UnblockPerson(ctx context.Context,
 	return &proto.UnblockPersonResponse{}, nil
 }
 
-func New(r app.Repository,
-	qs queries.PersonQueryService,
-	cs commands.PersonCommandService) *Server {
+func New(qs queries.QueryService, cs commands.CommandService) *Server {
 	//
-	return &Server{personsRepository: r, queryService: qs, commandService: cs}
+	return &Server{queryService: qs, commandService: cs}
 }
