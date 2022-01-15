@@ -1,11 +1,10 @@
-package persons
+package queries
 
 import (
 	"context"
-	"personService/app/projections"
 )
 
-func (qs *personQueryService) GetPersons(ctx context.Context, query GetPersonsQuery) ([]*projections.Person, error) {
+func (qs *personQueryService) GetPersons(ctx context.Context, query GetPersonsQuery) ([]*Person, error) {
 	const q = `SELECT * FROM persons LIMIT $1 OFFSET $2`
 
 	limit := int32(10)
@@ -13,7 +12,7 @@ func (qs *personQueryService) GetPersons(ctx context.Context, query GetPersonsQu
 		limit = query.Limit
 	}
 
-	var persons []*projections.Person
+	var persons []*Person
 	err := qs.Tx.GetDB(ctx).Select(&persons, q, limit, query.Offset)
 
 	return persons, err

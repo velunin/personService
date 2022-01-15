@@ -1,10 +1,10 @@
-package persons
+package commands
 
 import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	"personService/domain"
+	"personService/modules/persons/domain"
 )
 
 func (cs *personCommandService) CreatePerson(ctx context.Context, command CreatePersonCommand) (uuid.UUID, error) {

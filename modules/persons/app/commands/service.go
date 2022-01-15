@@ -1,11 +1,11 @@
-package persons
+package commands
 
 import (
 	"context"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
-	"personService/app/database"
-	"personService/app/repositories/person"
+	"personService/internal/database"
+	"personService/modules/persons/app"
 )
 
 type PersonCommandService interface {
@@ -17,7 +17,7 @@ type PersonCommandService interface {
 
 type CsParams struct {
 	fx.In
-	PersonRepo person.Repository
+	PersonRepo app.Repository
 	Tx         database.Transaction
 }
 

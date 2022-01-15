@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configPath = "config/config.local.yaml"
+	configPath = "./config.local.yaml"
 )
 
 type Configs struct {

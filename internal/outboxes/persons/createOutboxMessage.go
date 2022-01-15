@@ -1,15 +1,15 @@
-package whenPersonCreated
+package persons
 
 import (
 	"context"
 	"go.uber.org/fx"
-	"personService/app"
-	"personService/app/database"
-	"personService/domain"
+	"personService/internal/database"
+	"personService/internal/dispatcher"
+	"personService/modules/persons/domain"
 )
 
 type CreateOutboxMessage interface {
-	app.EventHandler
+	dispatcher.EventHandler
 }
 
 type createOutboxMessHandler struct {
@@ -36,6 +36,10 @@ func (h *createOutboxMessHandler) Handle(ctx context.Context, event interface{})
 	return nil
 }
 
-func NewCreateOutboxMessageHandler(params CreateOutboxMessageParams) CreateOutboxMessage {
-	return &createOutboxMessHandler{params}
+func (h *createOutboxMessHandler) GetEventType() interface{} {
+	return domain.PersonCreatedEvent{}
+}
+
+func NewCreateOutboxMessageHandler(params CreateOutboxMessageParams) dispatcher.EventHandlerGroup {
+	return dispatcher.EventHandlerGroup{Handler: &createOutboxMessHandler{params}}
 }

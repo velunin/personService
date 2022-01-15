@@ -7,20 +7,20 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"personService/api/go"
-	personcommands "personService/app/commands/persons"
-	personqueries "personService/app/queries/persons"
-	repoperson "personService/app/repositories/person"
+	"personService/modules/persons/app"
+	"personService/modules/persons/app/commands"
+	"personService/modules/persons/app/queries"
 )
 
 type PersonServer struct {
 	proto.UnimplementedPersonsApiServer
-	personsRepository repoperson.Repository
-	queryService      personqueries.PersonQueryService
-	commandService    personcommands.PersonCommandService
+	personsRepository app.Repository
+	queryService      queries.PersonQueryService
+	commandService    commands.PersonCommandService
 }
 
 func (s *PersonServer) GetPersons(ctx context.Context, req *proto.GetPersonsRequest) (*proto.GetPersonsResponse, error) {
-	persons, err := s.queryService.GetPersons(ctx, personqueries.GetPersonsQuery{
+	persons, err := s.queryService.GetPersons(ctx, queries.GetPersonsQuery{
 		Offset: req.Offset,
 		Limit:  req.Limit,
 	})
@@ -48,9 +48,9 @@ func (s *PersonServer) GetPerson(ctx context.Context, req *proto.GetPersonReques
 		return nil, status.Error(codes.InvalidArgument, "id must be UUID")
 	}
 
-	person, err := s.queryService.GetPerson(ctx, personqueries.GetPersonQuery{Id: personId})
+	person, err := s.queryService.GetPerson(ctx, queries.GetPersonQuery{Id: personId})
 	if err != nil {
-		if errors.Is(err, repoperson.ErrNotFound) {
+		if errors.Is(err, app.ErrNotFound) {
 			return nil, status.Error(codes.NotFound, "person not found")
 		}
 
@@ -68,7 +68,7 @@ func (s *PersonServer) GetPerson(ctx context.Context, req *proto.GetPersonReques
 func (s *PersonServer) CreatePerson(ctx context.Context,
 	req *proto.CreatePersonRequest) (*proto.CreatePersonResponse, error) {
 	//
-	id, err := s.commandService.CreatePerson(ctx, personcommands.CreatePersonCommand{
+	id, err := s.commandService.CreatePerson(ctx, commands.CreatePersonCommand{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 	})
@@ -87,7 +87,7 @@ func (s *PersonServer) RenamePerson(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "id must be UUID")
 	}
 
-	err = s.commandService.RenamePerson(ctx, personcommands.RenamePersonCommand{
+	err = s.commandService.RenamePerson(ctx, commands.RenamePersonCommand{
 		Id:        personId,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
@@ -107,7 +107,7 @@ func (s *PersonServer) BlockPerson(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "id must be UUID")
 	}
 
-	err = s.commandService.BlockPerson(ctx, personcommands.BlockPersonCommand{
+	err = s.commandService.BlockPerson(ctx, commands.BlockPersonCommand{
 		Id: personId,
 	})
 	if err != nil {
@@ -125,7 +125,7 @@ func (s *PersonServer) UnblockPerson(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "id must be UUID")
 	}
 
-	err = s.commandService.UnblockPerson(ctx, personcommands.UnblockPersonCommand{
+	err = s.commandService.UnblockPerson(ctx, commands.UnblockPersonCommand{
 		Id: personId,
 	})
 	if err != nil {
@@ -135,9 +135,9 @@ func (s *PersonServer) UnblockPerson(ctx context.Context,
 	return &proto.UnblockPersonResponse{}, nil
 }
 
-func New(r repoperson.Repository,
-	qs personqueries.PersonQueryService,
-	cs personcommands.PersonCommandService) *PersonServer {
+func New(r app.Repository,
+	qs queries.PersonQueryService,
+	cs commands.PersonCommandService) *PersonServer {
 	//
 	return &PersonServer{personsRepository: r, queryService: qs, commandService: cs}
 }

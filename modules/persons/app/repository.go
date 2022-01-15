@@ -1,4 +1,4 @@
-package person
+package app
 
 import (
 	"context"
@@ -6,15 +6,15 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
-	"personService/app/database"
-	"personService/app/dispatcher"
-	"personService/domain"
+	"personService/internal/database"
+	"personService/internal/dispatcher"
+	"personService/modules/persons/domain"
 )
 
 type Repository interface {
-	Get(ctx context.Context, id uuid.UUID) (*domain.Person, error)
-	Insert(ctx context.Context, person *domain.Person) error
-	Update(ctx context.Context, person *domain.Person) error
+	Get(ctx context.Context, id uuid.UUID) (*domain.PersonAggregate, error)
+	Insert(ctx context.Context, person *domain.PersonAggregate) error
+	Update(ctx context.Context, person *domain.PersonAggregate) error
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
@@ -28,7 +28,7 @@ type RepoParams struct {
 	EventDispatcher dispatcher.Dispatcher
 }
 
-func (r *personRepository) Insert(ctx context.Context, person *domain.Person) error {
+func (r *personRepository) Insert(ctx context.Context, person *domain.PersonAggregate) error {
 	const query = `INSERT INTO persons(id,first_name,last_name,is_blocked) VALUES($1,$2,$3,$4)`
 
 	state := person.State()
@@ -42,7 +42,7 @@ func (r *personRepository) Insert(ctx context.Context, person *domain.Person) er
 	return err
 }
 
-func (r *personRepository) Update(ctx context.Context, person *domain.Person) error {
+func (r *personRepository) Update(ctx context.Context, person *domain.PersonAggregate) error {
 	const query = `UPDATE persons SET first_name=$2, last_name=$3, is_blocked=$4 WHERE id=$1`
 
 	state := person.State()
@@ -61,7 +61,7 @@ func (r *personRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-func (r *personRepository) Get(ctx context.Context, id uuid.UUID) (*domain.Person, error) {
+func (r *personRepository) Get(ctx context.Context, id uuid.UUID) (*domain.PersonAggregate, error) {
 	const query = `SELECT * FROM persons WHERE id = $1 FOR UPDATE`
 
 	state := domain.PersonState{}
@@ -77,7 +77,7 @@ func (r *personRepository) Get(ctx context.Context, id uuid.UUID) (*domain.Perso
 	return domain.RestorePerson(&state), nil
 }
 
-func (r *personRepository) dispatchEvents(ctx context.Context, person *domain.Person) error {
+func (r *personRepository) dispatchEvents(ctx context.Context, person *domain.PersonAggregate) error {
 	for _, event := range person.GetEvents() {
 		err := r.EventDispatcher.Dispatch(ctx, event)
 		if err != nil {

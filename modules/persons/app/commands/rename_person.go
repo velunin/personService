@@ -1,4 +1,4 @@
-package persons
+package commands
 
 import (
 	"context"

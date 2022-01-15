@@ -1,15 +1,14 @@
-package persons
+package queries
 
 import (
 	"context"
 	"go.uber.org/fx"
-	"personService/app/database"
-	"personService/app/projections"
+	"personService/internal/database"
 )
 
 type PersonQueryService interface {
-	GetPerson(ctx context.Context, query GetPersonQuery) (*projections.Person, error)
-	GetPersons(ctx context.Context, query GetPersonsQuery) ([]*projections.Person, error)
+	GetPerson(ctx context.Context, query GetPersonQuery) (*Person, error)
+	GetPersons(ctx context.Context, query GetPersonsQuery) ([]*Person, error)
 }
 
 type personQueryService struct {

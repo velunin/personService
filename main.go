@@ -7,14 +7,14 @@ import (
 	"log"
 	"net"
 	pb "personService/api/go"
-	personcommands "personService/app/commands/persons"
-	"personService/app/config"
-	"personService/app/database"
-	"personService/app/dispatcher"
-	"personService/app/eventhandlers/person/whenPersonCreated"
-	personqueries "personService/app/queries/persons"
-	personrepo "personService/app/repositories/person"
-	"personService/app/rpc"
+	"personService/internal/config"
+	"personService/internal/database"
+	"personService/internal/dispatcher"
+	personsoutbox "personService/internal/outboxes/persons"
+	personsrepo "personService/modules/persons/app"
+	personscommands "personService/modules/persons/app/commands"
+	personsqueries "personService/modules/persons/app/queries"
+	"personService/modules/persons/app/rpc"
 )
 
 const (
@@ -27,14 +27,13 @@ func main() {
 			config.SetupConfigs,
 
 			rpc.New,
-			database.NewTransaction,
-			personrepo.NewPersonRepository,
-			personqueries.NewPersonQueryService,
-			personcommands.NewPersonCommandService,
-
 			dispatcher.New,
-			whenPersonCreated.NewCreateOutboxMessageHandler,
-			whenPersonCreated.NewDoSomeActionsHandler,
+			database.NewTransaction,
+			personsoutbox.NewCreateOutboxMessageHandler,
+
+			personsrepo.NewPersonRepository,
+			personsqueries.NewPersonQueryService,
+			personscommands.NewPersonCommandService,
 		),
 
 		fx.Invoke(registerHooks))

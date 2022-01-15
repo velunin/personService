@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Person struct {
+type PersonAggregate struct {
 	state  PersonState
 	events []interface{}
 }
@@ -17,11 +17,11 @@ type PersonState struct {
 	IsBlocked bool      `db:"is_blocked"`
 }
 
-func (p *Person) State() PersonState {
+func (p *PersonAggregate) State() PersonState {
 	return p.state
 }
 
-func (p *Person) ChangeName(firstName, lastName string) error {
+func (p *PersonAggregate) ChangeName(firstName, lastName string) error {
 	if p.state.IsBlocked == true {
 		return ErrPersonBlocked
 	}
@@ -37,7 +37,7 @@ func (p *Person) ChangeName(firstName, lastName string) error {
 	return nil
 }
 
-func (p *Person) Block() error {
+func (p *PersonAggregate) Block() error {
 	if p.state.IsBlocked {
 		return ErrAlreadyPersonBlocked
 	}
@@ -47,7 +47,7 @@ func (p *Person) Block() error {
 	return nil
 }
 
-func (p *Person) Unblock() error {
+func (p *PersonAggregate) Unblock() error {
 	if p.state.IsBlocked == false {
 		return ErrAlreadyPersonUnblocked
 	}
@@ -57,13 +57,13 @@ func (p *Person) Unblock() error {
 	return nil
 }
 
-func NewPerson(id uuid.UUID, firstName, lastName string) (*Person, error) {
+func NewPerson(id uuid.UUID, firstName, lastName string) (*PersonAggregate, error) {
 	err := validateNames(firstName, lastName)
 	if err != nil {
 		return nil, err
 	}
 
-	person := &Person{state: PersonState{
+	person := &PersonAggregate{state: PersonState{
 		Id:        id,
 		FirstName: firstName,
 		LastName:  lastName,
@@ -79,8 +79,8 @@ func NewPerson(id uuid.UUID, firstName, lastName string) (*Person, error) {
 	return person, nil
 }
 
-func RestorePerson(state *PersonState) *Person {
-	return &Person{state: *state}
+func RestorePerson(state *PersonState) *PersonAggregate {
+	return &PersonAggregate{state: *state}
 }
 
 func validateNames(firstName, lastName string) error {
@@ -94,11 +94,11 @@ func validateNames(firstName, lastName string) error {
 	return nil
 }
 
-func (p *Person) apply(event interface{}) {
+func (p *PersonAggregate) apply(event interface{}) {
 	p.events = append(p.events, event)
 }
 
-func (p *Person) GetEvents() []interface{} {
+func (p *PersonAggregate) GetEvents() []interface{} {
 	return p.events
 }
 
