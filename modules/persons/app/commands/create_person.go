@@ -11,7 +11,7 @@ func (cs *personCommandService) CreatePerson(ctx context.Context, command Create
 	personId := uuid.New()
 	person, err := domain.NewPerson(personId, command.FirstName, command.LastName)
 	if err != nil {
-		return uuid.Nil, nil
+		return uuid.Nil, err
 	}
 
 	txErr := cs.Tx.ExecInTran(ctx, func(ctx context.Context) error {

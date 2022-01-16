@@ -12,7 +12,7 @@ type PersonAggregate struct {
 
 type PersonState struct {
 	Id        uuid.UUID `db:"id"`
-	FirstName string    `db:"first_name""`
+	FirstName string    `db:"first_name"`
 	LastName  string    `db:"last_name"`
 	IsBlocked bool      `db:"is_blocked"`
 }
@@ -34,6 +34,11 @@ func (p *PersonAggregate) ChangeName(firstName, lastName string) error {
 	p.state.FirstName = firstName
 	p.state.LastName = lastName
 
+	p.apply(PersonNameChangedEvent{
+		Id:        p.state.Id,
+		FirstName: firstName,
+		LastName:  lastName})
+
 	return nil
 }
 
@@ -44,6 +49,8 @@ func (p *PersonAggregate) Block() error {
 
 	p.state.IsBlocked = true
 
+	p.apply(PersonBlockedEvent{Id: p.state.Id})
+
 	return nil
 }
 
@@ -53,6 +60,8 @@ func (p *PersonAggregate) Unblock() error {
 	}
 
 	p.state.IsBlocked = false
+
+	p.apply(PersonUnblockedEvent{Id: p.state.Id})
 
 	return nil
 }
@@ -115,4 +124,18 @@ type PersonCreatedEvent struct {
 	Id        uuid.UUID
 	FirstName string
 	LastName  string
+}
+
+type PersonNameChangedEvent struct {
+	Id        uuid.UUID
+	FirstName string
+	LastName  string
+}
+
+type PersonBlockedEvent struct {
+	Id uuid.UUID
+}
+
+type PersonUnblockedEvent struct {
+	Id uuid.UUID
 }
